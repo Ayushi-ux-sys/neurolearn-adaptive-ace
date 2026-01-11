@@ -44,7 +44,7 @@ const games = [
     icon: '🃏',
     color: 'from-orange-400 to-orange-600',
     bg: 'bg-orange-50',
-    unlocked: false,
+    unlocked: true,
     skills: ['Memory', 'Focus'],
   },
   {
@@ -54,7 +54,7 @@ const games = [
     icon: '🔊',
     color: 'from-pink-400 to-pink-600',
     bg: 'bg-pink-50',
-    unlocked: false,
+    unlocked: true,
     skills: ['Listening', 'Phonics'],
   },
   {
@@ -64,7 +64,7 @@ const games = [
     icon: '🖼️',
     color: 'from-teal-400 to-teal-600',
     bg: 'bg-teal-50',
-    unlocked: false,
+    unlocked: true,
     skills: ['Vocabulary', 'Spelling'],
   },
   {
@@ -74,7 +74,7 @@ const games = [
     icon: '⚡',
     color: 'from-yellow-400 to-yellow-600',
     bg: 'bg-yellow-50',
-    unlocked: false,
+    unlocked: true,
     skills: ['Speed', 'Focus'],
   },
   {
@@ -84,7 +84,7 @@ const games = [
     icon: '🔤',
     color: 'from-indigo-400 to-indigo-600',
     bg: 'bg-indigo-50',
-    unlocked: false,
+    unlocked: true,
     skills: ['Spelling', 'Reading'],
   },
   {
@@ -94,7 +94,7 @@ const games = [
     icon: '🎵',
     color: 'from-rose-400 to-rose-600',
     bg: 'bg-rose-50',
-    unlocked: false,
+    unlocked: true,
     skills: ['Phonics', 'Vocabulary'],
   },
   {
@@ -104,7 +104,7 @@ const games = [
     icon: '📚',
     color: 'from-cyan-400 to-cyan-600',
     bg: 'bg-cyan-50',
-    unlocked: false,
+    unlocked: true,
     skills: ['Comprehension', 'Sequencing'],
   },
 ];
