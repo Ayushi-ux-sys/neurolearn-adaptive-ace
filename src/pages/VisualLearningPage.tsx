@@ -3,51 +3,125 @@ import { BackButton } from '@/components/layout/BackButton';
 import { Header } from '@/components/layout/Header';
 import { useLearningMode } from '@/contexts/LearningModeContext';
 import { motion } from 'framer-motion';
-import { Eye, Upload, Camera, Loader2, Sparkles, Lightbulb, Image } from 'lucide-react';
+import { Eye, Upload, Camera, Sparkles, Lightbulb, Image, Volume2, VolumeX, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 export function VisualLearningPage() {
+  const { mode, playbackSpeed } = useLearningMode();
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const [explanation, setExplanation] = useState<{
     title: string;
     points: string[];
     tip: string;
+    voiceDescription: string;
   } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const speechRef = useRef<SpeechSynthesisUtterance | null>(null);
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
+    // Validate file size (max 4MB for base64)
+    if (file.size > 4 * 1024 * 1024) {
+      toast.error('Image too large. Please use an image under 4MB.');
+      return;
+    }
+
     const reader = new FileReader();
-    reader.onload = (e) => {
-      setUploadedImage(e.target?.result as string);
-      analyzeImage();
+    reader.onload = async (e) => {
+      const imageBase64 = e.target?.result as string;
+      setUploadedImage(imageBase64);
+      setExplanation(null);
+      await analyzeImage(imageBase64);
     };
     reader.readAsDataURL(file);
   };
 
-  const analyzeImage = () => {
+  const analyzeImage = async (imageBase64: string) => {
     setIsAnalyzing(true);
-    // Simulate AI analysis
-    setTimeout(() => {
+    
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/analyze-image`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({
+            imageBase64,
+            learningMode: mode,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Analysis failed: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
       setExplanation({
-        title: 'Visual Explanation',
-        points: [
-          '🔍 This image shows important concepts that can help you learn better',
-          '📝 The key elements are organized to make understanding easier',
-          '🎯 Focus on the main idea first, then look at the details',
-          '💡 Try connecting what you see to things you already know',
-        ],
-        tip: 'Visual learning helps your brain remember things longer! Try drawing what you learn.',
+        title: data.title || 'Visual Explanation',
+        points: data.points || [],
+        tip: data.tip || 'Keep exploring and learning!',
+        voiceDescription: data.voiceDescription || data.title || 'Image analyzed successfully.',
       });
+
+      toast.success('Image analyzed! 🎉');
+    } catch (error) {
+      console.error('Error analyzing image:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to analyze image. Please try again.');
+    } finally {
       setIsAnalyzing(false);
-    }, 2000);
+    }
   };
 
   const handleCameraCapture = () => {
-    // In a real app, this would open the camera
     fileInputRef.current?.click();
+  };
+
+  const speakDescription = () => {
+    if (!explanation?.voiceDescription) return;
+
+    if (isSpeaking) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+      return;
+    }
+
+    const utterance = new SpeechSynthesisUtterance(explanation.voiceDescription);
+    utterance.rate = playbackSpeed;
+    utterance.pitch = 1;
+    utterance.lang = 'en-US';
+    
+    utterance.onend = () => setIsSpeaking(false);
+    utterance.onerror = () => setIsSpeaking(false);
+    
+    speechRef.current = utterance;
+    setIsSpeaking(true);
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const clearImage = () => {
+    setUploadedImage(null);
+    setExplanation(null);
+    if (isSpeaking) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+    }
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   return (
@@ -74,47 +148,49 @@ export function VisualLearningPage() {
         </motion.div>
 
         {/* Upload Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="card-neuro p-6 mb-6"
-        >
-          <h2 className="font-bold text-foreground mb-4">Upload an Image</h2>
-          
-          <div className="grid grid-cols-2 gap-4">
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={handleCameraCapture}
-              className="p-8 bg-blue-50 rounded-2xl border-2 border-dashed border-blue-200 hover:border-blue-400 transition-colors text-center"
-            >
-              <Camera className="w-12 h-12 text-blue-500 mx-auto mb-3" />
-              <p className="font-medium text-foreground">Take Photo</p>
-              <p className="text-xs text-muted-foreground mt-1">Use your camera</p>
-            </motion.button>
+        {!uploadedImage && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="card-neuro p-6 mb-6"
+          >
+            <h2 className="font-bold text-foreground mb-4">Upload an Image</h2>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={handleCameraCapture}
+                className="p-8 bg-blue-50 rounded-2xl border-2 border-dashed border-blue-200 hover:border-blue-400 transition-colors text-center"
+              >
+                <Camera className="w-12 h-12 text-blue-500 mx-auto mb-3" />
+                <p className="font-medium text-foreground">Take Photo</p>
+                <p className="text-xs text-muted-foreground mt-1">Use your camera</p>
+              </motion.button>
 
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => fileInputRef.current?.click()}
-              className="p-8 bg-purple-50 rounded-2xl border-2 border-dashed border-purple-200 hover:border-purple-400 transition-colors text-center"
-            >
-              <Upload className="w-12 h-12 text-purple-500 mx-auto mb-3" />
-              <p className="font-medium text-foreground">Upload Image</p>
-              <p className="text-xs text-muted-foreground mt-1">From your device</p>
-            </motion.button>
-          </div>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => fileInputRef.current?.click()}
+                className="p-8 bg-purple-50 rounded-2xl border-2 border-dashed border-purple-200 hover:border-purple-400 transition-colors text-center"
+              >
+                <Upload className="w-12 h-12 text-purple-500 mx-auto mb-3" />
+                <p className="font-medium text-foreground">Upload Image</p>
+                <p className="text-xs text-muted-foreground mt-1">From your device</p>
+              </motion.button>
+            </div>
 
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            capture="environment"
-            onChange={handleImageUpload}
-            className="hidden"
-          />
-        </motion.div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              onChange={handleImageUpload}
+              className="hidden"
+            />
+          </motion.div>
+        )}
 
         {/* Uploaded Image Preview */}
         {uploadedImage && (
@@ -123,6 +199,15 @@ export function VisualLearningPage() {
             animate={{ opacity: 1, scale: 1 }}
             className="card-neuro p-4 mb-6"
           >
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-sm font-medium text-foreground">Your Image</span>
+              <button
+                onClick={clearImage}
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Upload New
+              </button>
+            </div>
             <img
               src={uploadedImage}
               alt="Uploaded"
@@ -146,7 +231,7 @@ export function VisualLearningPage() {
               <Sparkles className="w-8 h-8 text-white" />
             </motion.div>
             <p className="text-lg font-medium text-foreground">Analyzing your image...</p>
-            <p className="text-muted-foreground">AI is creating a visual explanation</p>
+            <p className="text-muted-foreground">AI is creating a personalized explanation</p>
           </motion.div>
         )}
 
@@ -157,9 +242,30 @@ export function VisualLearningPage() {
             animate={{ opacity: 1, y: 0 }}
             className="card-neuro p-6"
           >
-            <div className="flex items-center gap-2 mb-4">
-              <Sparkles className="w-6 h-6 text-primary" />
-              <h2 className="text-xl font-bold text-foreground">{explanation.title}</h2>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-6 h-6 text-primary" />
+                <h2 className="text-xl font-bold text-foreground">{explanation.title}</h2>
+              </div>
+              
+              {/* Voice Button */}
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={speakDescription}
+                className={`p-3 rounded-full transition-colors ${
+                  isSpeaking 
+                    ? 'bg-primary text-white' 
+                    : 'bg-muted hover:bg-muted/80'
+                }`}
+                title={isSpeaking ? 'Stop speaking' : 'Read aloud'}
+              >
+                {isSpeaking ? (
+                  <VolumeX className="w-5 h-5" />
+                ) : (
+                  <Volume2 className="w-5 h-5" />
+                )}
+              </motion.button>
             </div>
 
             <ul className="space-y-3 mb-6">
@@ -182,6 +288,13 @@ export function VisualLearningPage() {
                 <span className="font-bold text-yellow-700">Learning Tip</span>
               </div>
               <p className="text-yellow-700">{explanation.tip}</p>
+            </div>
+
+            {/* Playback Speed Info */}
+            <div className="mt-4 text-center">
+              <p className="text-xs text-muted-foreground">
+                Voice playback speed: {playbackSpeed}x
+              </p>
             </div>
           </motion.div>
         )}

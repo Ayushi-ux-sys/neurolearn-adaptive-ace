@@ -8,7 +8,7 @@ import { BookOpen, ChevronRight, Star, Lock } from 'lucide-react';
 const grades = Array.from({ length: 12 }, (_, i) => ({
   id: i + 1,
   name: `Class ${i + 1}`,
-  isLocked: i > 2, // First 3 classes unlocked for demo
+  isLocked: false, // All classes unlocked
   stars: Math.floor(Math.random() * 4),
 }));
 
