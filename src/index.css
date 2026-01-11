@@ -2,87 +2,184 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* OpenDyslexic Font Import */
+@import url('https://fonts.cdnfonts.com/css/opendyslexic');
+
+/* Friendly rounded fonts for ADHD mode */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap');
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Default - Neutral/Explore Mode */
+    --background: 210 20% 98%;
+    --foreground: 222 20% 20%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 222 20% 20%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 222 20% 20%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 262 83% 58%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 20% 20%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 210 30% 94%;
+    --muted-foreground: 215 15% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 172 66% 50%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
 
-    --radius: 0.5rem;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
+    --border: 214 20% 88%;
+    --input: 214 20% 88%;
+    --ring: 262 83% 58%;
+
+    --radius: 1rem;
+
+    /* NeuroLearn Custom Colors */
+    --neuro-cream: 45 30% 96%;
+    --neuro-soft-blue: 210 50% 85%;
+    --neuro-mint: 160 40% 85%;
+    --neuro-coral: 15 80% 70%;
+    --neuro-lavender: 270 40% 85%;
+    --neuro-sunshine: 45 90% 65%;
+    --neuro-teal: 175 60% 45%;
+    --neuro-orange: 25 95% 55%;
+
+    /* Gamification Colors */
+    --game-gold: 45 100% 50%;
+    --game-silver: 210 10% 70%;
+    --game-bronze: 30 60% 50%;
+    --game-xp: 142 71% 45%;
+
+    /* Mode Indicator */
+    --mode-dyslexia: 210 50% 50%;
+    --mode-adhd: 25 95% 55%;
+    --mode-explore: 262 83% 58%;
+
+    /* Typography */
+    --font-dyslexia: 'OpenDyslexic', sans-serif;
+    --font-adhd: 'Nunito', sans-serif;
+    --font-default: 'Nunito', sans-serif;
+
+    /* Spacing for accessibility */
+    --line-height-relaxed: 1.8;
+    --line-height-loose: 2.2;
+    --letter-spacing-wide: 0.05em;
+
+    /* Animation speeds */
+    --animation-slow: 400ms;
+    --animation-normal: 250ms;
+    --animation-fast: 150ms;
+
+    /* Sidebar variables */
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
+  /* Dyslexia Mode Theme */
+  .mode-dyslexia {
+    --background: 45 30% 96%;
+    --foreground: 220 15% 25%;
+
+    --card: 45 25% 98%;
+    --card-foreground: 220 15% 25%;
+
+    --primary: 210 50% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 160 30% 92%;
+    --secondary-foreground: 220 15% 25%;
+
+    --muted: 45 20% 90%;
+    --muted-foreground: 220 10% 40%;
+
+    --accent: 160 40% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --border: 45 20% 85%;
+    --input: 45 20% 88%;
+    --ring: 210 50% 50%;
+
+    font-family: var(--font-dyslexia);
+    line-height: var(--line-height-loose);
+    letter-spacing: var(--letter-spacing-wide);
+  }
+
+  /* ADHD Mode Theme */
+  .mode-adhd {
+    --background: 0 0% 100%;
+    --foreground: 220 30% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 30% 15%;
+
+    --primary: 25 95% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 175 50% 92%;
+    --secondary-foreground: 220 30% 15%;
+
+    --muted: 210 20% 95%;
+    --muted-foreground: 220 15% 40%;
+
+    --accent: 175 60% 45%;
+    --accent-foreground: 0 0% 100%;
+
+    --border: 210 20% 88%;
+    --input: 210 20% 90%;
+    --ring: 25 95% 55%;
+
+    font-family: var(--font-adhd);
+    line-height: var(--line-height-relaxed);
+  }
+
   .dark {
-    --background: 222.2 84% 4.9%;
+    --background: 222 30% 10%;
     --foreground: 210 40% 98%;
 
-    --card: 222.2 84% 4.9%;
+    --card: 222 30% 12%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 222.2 84% 4.9%;
+    --popover: 222 30% 12%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 262 83% 65%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 217.2 32.6% 17.5%;
+    --secondary: 217 30% 20%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 217 30% 18%;
+    --muted-foreground: 215 20% 65%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 172 66% 45%;
+    --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 62% 45%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --border: 217 30% 20%;
+    --input: 217 30% 20%;
+    --ring: 262 83% 65%;
+
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -100,6 +197,187 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-default);
   }
+
+  /* Dyslexia-friendly text rendering */
+  .mode-dyslexia body,
+  .mode-dyslexia p,
+  .mode-dyslexia span,
+  .mode-dyslexia h1,
+  .mode-dyslexia h2,
+  .mode-dyslexia h3,
+  .mode-dyslexia h4,
+  .mode-dyslexia h5,
+  .mode-dyslexia h6 {
+    font-family: var(--font-dyslexia);
+    line-height: var(--line-height-loose);
+    letter-spacing: var(--letter-spacing-wide);
+    word-spacing: 0.2em;
+  }
+
+  /* ADHD-friendly focus states */
+  .mode-adhd *:focus-visible {
+    outline: 3px solid hsl(var(--primary));
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* Child-friendly large buttons */
+  .btn-child-friendly {
+    @apply px-6 py-4 text-lg font-bold rounded-2xl shadow-lg transition-all duration-200;
+    @apply hover:scale-105 hover:shadow-xl;
+    @apply active:scale-95;
+    @apply focus-visible:ring-4 focus-visible:ring-ring focus-visible:ring-offset-2;
+    min-height: 60px;
+    min-width: 120px;
+  }
+
+  /* Card with calming hover effect */
+  .card-neuro {
+    @apply bg-card rounded-3xl shadow-md border border-border/50;
+    @apply transition-all duration-300 ease-out;
+    @apply hover:shadow-xl hover:-translate-y-1;
+  }
+
+  /* Progress bar with animation */
+  .progress-neuro {
+    @apply h-4 bg-muted rounded-full overflow-hidden;
+  }
+
+  .progress-neuro-fill {
+    @apply h-full bg-gradient-to-r from-primary to-accent rounded-full;
+    @apply transition-all duration-500 ease-out;
+  }
+
+  /* Badge styles for gamification */
+  .badge-gold {
+    background: linear-gradient(135deg, hsl(45, 100%, 50%), hsl(40, 100%, 60%));
+    @apply text-foreground shadow-lg;
+  }
+
+  .badge-silver {
+    background: linear-gradient(135deg, hsl(210, 10%, 70%), hsl(210, 10%, 80%));
+    @apply text-foreground shadow-lg;
+  }
+
+  .badge-bronze {
+    background: linear-gradient(135deg, hsl(30, 60%, 50%), hsl(30, 60%, 60%));
+    @apply text-white shadow-lg;
+  }
+
+  /* Micro-learning card for ADHD */
+  .micro-card {
+    @apply bg-card rounded-2xl p-4 border-2 border-transparent;
+    @apply transition-all duration-200;
+    @apply hover:border-primary/50 hover:shadow-lg;
+  }
+
+  /* Reading overlay for dyslexia */
+  .reading-overlay {
+    @apply fixed inset-0 pointer-events-none z-50;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      transparent 45%,
+      hsl(45, 90%, 85%, 0.3) 45%,
+      hsl(45, 90%, 85%, 0.3) 55%,
+      transparent 55%,
+      transparent 100%
+    );
+  }
+
+  /* Game button with bounce effect */
+  .game-btn {
+    @apply btn-child-friendly;
+    animation: gentle-bounce 2s ease-in-out infinite;
+  }
+
+  @keyframes gentle-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+
+  .game-btn:hover {
+    animation: none;
+  }
+
+  /* Celebration animation */
+  @keyframes celebrate {
+    0% { transform: scale(1); }
+    25% { transform: scale(1.1) rotate(-3deg); }
+    50% { transform: scale(1.15); }
+    75% { transform: scale(1.1) rotate(3deg); }
+    100% { transform: scale(1); }
+  }
+
+  .celebrate {
+    animation: celebrate 0.5s ease-in-out;
+  }
+
+  /* Pulse for attention (ADHD mode) */
+  @keyframes attention-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0.4); }
+    50% { box-shadow: 0 0 0 10px hsl(var(--primary) / 0); }
+  }
+
+  .attention-pulse {
+    animation: attention-pulse 2s infinite;
+  }
+
+  /* Fade in animation */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+  }
+
+  /* Stagger children animations */
+  .stagger-children > * {
+    opacity: 0;
+    animation: fadeIn 0.4s ease-out forwards;
+  }
+
+  .stagger-children > *:nth-child(1) { animation-delay: 0.1s; }
+  .stagger-children > *:nth-child(2) { animation-delay: 0.2s; }
+  .stagger-children > *:nth-child(3) { animation-delay: 0.3s; }
+  .stagger-children > *:nth-child(4) { animation-delay: 0.4s; }
+  .stagger-children > *:nth-child(5) { animation-delay: 0.5s; }
+  .stagger-children > *:nth-child(6) { animation-delay: 0.6s; }
+}
+
+/* Accessibility: Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Custom scrollbar for child-friendly design */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary) / 0.5);
+  border-radius: 10px;
+  border: 2px solid hsl(var(--muted));
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.7);
 }
